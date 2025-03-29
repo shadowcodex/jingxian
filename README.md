@@ -10,12 +10,34 @@ I decided to build my own static site generator because I found a lack of suppor
 
 ## Dev Process
 
-I am going to start with building basic functionality to use directly, and eventually leverage this to build a repeatable tool that others can use to build their websites.
+Install locally:
 
+```
+poetry run pip install --editable .
+```
 
-I hope to have a basic set of functions such as:
+Usage:
+```
+jingxian build <path>
+jingxian serve <path>
+```
 
-- `poetry run build`
-- `poetry run serve`
-
-etc...
+## Expected Folder structure.
+```
+hanzi-v2/
+├── _collections/            # JSON collections reusable across all pages (e.g. authors, metadata)
+├── _content/                # Markdown-driven content for articles and pages
+│   ├── articles/
+│   └── pages/
+├── _data/                   # General-purpose JSON data used inside templates/
+├── _datapages/              # JSON arrays used to generate data-driven pages (one page per entry)
+├── _static/                 # Static assets to be copied directly (CSS, images, JS, etc.)
+│   ├── css/
+│   │   └── styles.css
+├── _templates/              # Jinja2 templates for layouts and pages
+│   ├── includes/            # Reusable partials (e.g., header, footer)
+│   ├── base.html            # Base layout extended by other templates
+│   ├── index.html           # Homepage template
+├── scripts/                 # Utility scripts (build helpers, data transformers, etc.)
+├── config.json              # Global site configuration and data-driven page setup
+```
