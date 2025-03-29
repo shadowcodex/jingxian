@@ -1,5 +1,6 @@
 # content_parser.py
 import json
+from pathlib import Path
 
 def parse_content(file_path):
     """Parse a Markdown file into front matter (dict) and content (Markdown string)."""

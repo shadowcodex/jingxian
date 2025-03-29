@@ -1,6 +1,6 @@
 # server.py
 from livereload import Server
-from generator import build_site
+from jingxian.generator import build_site
 
 def serve():
     # Initial build
