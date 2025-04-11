@@ -1,7 +1,6 @@
 # markdown_processor.py
-import markdown
+from markdown_it import MarkdownIt
 
 def convert_markdown(markdown_text):
-    """Convert Markdown text to HTML string."""
-    html = markdown.markdown(markdown_text)
-    return html
+    md = MarkdownIt("commonmark", {"html": True})
+    return md.render(markdown_text)

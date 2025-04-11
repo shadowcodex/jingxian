@@ -1,18 +1,25 @@
-# server.py
 from livereload import Server
 from jingxian.generator import build_site
+from pathlib import Path
 
-def serve():
-    # Initial build
-    build_site()
+def serve(site_path):
+    build_site(site_path)
+
     print("Serving at http://127.0.0.1:4000 (Live reload enabled)")
-    # Create a livereload server
     server = Server()
-    # Watch relevant folders for changes, triggering rebuild on any change
-    server.watch('content/*', build_site)
-    server.watch('templates/*', build_site)
-    server.watch('data/*', build_site)
-    server.watch('collections/*', build_site)
-    server.watch('static/*', build_site)
-    # Serve the output directory on port 4000
-    server.serve(root='output', host='127.0.0.1', port=4000)
+
+    watch_dirs = [
+        '_content',
+        '_templates',
+        '_data',
+        '_datapages',
+        '_collections',
+        '_static',
+    ]
+
+    for folder in watch_dirs:
+        glob_path = str(site_path / folder / '**' / '*')
+        print(f"Watching: {glob_path}")
+        server.watch(glob_path, lambda: print(f"🔁 Change detected in {folder}") or build_site(site_path))
+
+    server.serve(root=str(site_path / 'build'), host='127.0.0.1', port=4000)
