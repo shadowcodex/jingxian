@@ -11,6 +11,12 @@ logger = get_logger("generator")
 
 def build_site(site_path):
 
+    from pygments.formatters import HtmlFormatter
+    css = HtmlFormatter(style="monokai").get_style_defs('.code-block')
+
+    with open(Path.joinpath(site_path,"_static/pygments.css"), "w") as f:
+        f.write(css)
+
     # 1. Load configuration
     with open(Path.joinpath(site_path, "config.json")) as cfg:
         config = json.load(cfg)
@@ -57,7 +63,7 @@ def build_site(site_path):
                 output_path.parent.mkdir(parents=True, exist_ok=True)
                 html = render_template(template_env, template_name, context)
                 output_path.write_text(html)
-                pages_in_file.append(page['page']['slug'])
+                pages_in_file.append(page['page'])
                 logger.info(f"Generated data-driven page: {output_path}")
         # (Optionally, if the JSON is a list of items and individual pages per item are needed,
         # you could iterate and render multiple pages here.)
@@ -100,6 +106,7 @@ def build_site(site_path):
         })
 
         # Then convert to HTML
+        print(textwrap.dedent(rendered_md))
         html_content = convert_markdown(textwrap.dedent(rendered_md))
         template_name = front_matter.get("template", "page") + ".html"
         context = {

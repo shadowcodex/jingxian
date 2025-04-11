@@ -13,8 +13,7 @@ def serve(site_path):
         '_templates',
         '_data',
         '_datapages',
-        '_collections',
-        '_static',
+        '_collections'
     ]
 
     for folder in watch_dirs:
