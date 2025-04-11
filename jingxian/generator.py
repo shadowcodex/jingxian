@@ -11,12 +11,6 @@ logger = get_logger("generator")
 
 def build_site(site_path):
 
-    from pygments.formatters import HtmlFormatter
-    css = HtmlFormatter(style="monokai").get_style_defs('.code-block')
-
-    with open(Path.joinpath(site_path,"_static/pygments.css"), "w") as f:
-        f.write(css)
-
     # 1. Load configuration
     with open(Path.joinpath(site_path, "config.json")) as cfg:
         config = json.load(cfg)
@@ -28,7 +22,8 @@ def build_site(site_path):
     
     # 2. Load collections data (global JSON data for templates)
     collections_data = {}
-    for coll_file in Path(Path.joinpath(site_path, "collections")).glob("*.json"):
+    for coll_file in Path(Path.joinpath(site_path, "_collections")).glob("*.json"):
+        logger.info(f"Loading collection {coll_file}")
         name = coll_file.stem  # filename without extension
         with open(coll_file) as f:
             collections_data[name] = json.load(f)
@@ -43,15 +38,12 @@ def build_site(site_path):
     # 5. Process Data-Driven Pages from JSON data
     data_file_pages = {}
     for data_file in Path(Path.joinpath(site_path,"_datapages")).glob("*.json"):
-        logger.info(f"datafile: {data_file}")
         name = data_file.stem  # e.g. "projects" for projects.json
         pages_in_file = []
         with open(data_file) as f:
             data = json.load(f)
-            logger.info(data)
         # Use a template matching the data file name (e.g. projects.html)
             for page in data:
-                logger.info(page)
                 template_name = f"{name}.html"
                 context = {
                     "page": page['page'],
@@ -106,7 +98,6 @@ def build_site(site_path):
         })
 
         # Then convert to HTML
-        print(textwrap.dedent(rendered_md))
         html_content = convert_markdown(textwrap.dedent(rendered_md))
         template_name = front_matter.get("template", "page") + ".html"
         context = {
