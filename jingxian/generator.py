@@ -6,6 +6,7 @@ from jingxian.markdown_processor import convert_markdown
 from jingxian.template_engine import init_template_engine, render_template
 from jingxian.logger import get_logger
 from datetime import datetime
+from itertools import chain
 
 logger = get_logger("generator")
 
@@ -87,7 +88,11 @@ def build_site(site_path):
         logger.info(f"Generated article: {output_path}")
     
     # 6. Process Markdown pages (standalone)
-    for md_file in Path(Path.joinpath(site_path,"_content/pages")).rglob("*.md"):
+    md_html_files = chain(
+        Path(site_path, "_content/pages").rglob("*.md"),
+        Path(site_path, "_content/pages").rglob("*.html")
+    )
+    for md_file in md_html_files:
         front_matter, md_content = parse_content(md_file)
 
         # Render the raw markdown through Jinja first
@@ -98,7 +103,12 @@ def build_site(site_path):
         })
 
         # Then convert to HTML
-        html_content = convert_markdown(textwrap.dedent(rendered_md))
+        html_content = ""
+        print(md_file.suffix)
+        if md_file.suffix == ".md":
+            html_content = convert_markdown(textwrap.dedent(rendered_md))
+        else:
+            html_content = rendered_md
         template_name = front_matter.get("template", "page") + ".html"
         context = {
             "page": front_matter,
