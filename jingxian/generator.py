@@ -117,8 +117,13 @@ def build_site(site_path):
         }
 
         # Output as /<pagename>/index.html for clean URLs
-        output_path = Path(output_dir) / md_file.stem / "index.html"
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+        print(md_file.name)
+        if md_file.name.strip() == "index.html" or md_file.name.strip() == "index.md":
+            print('here')
+            output_path = Path(output_dir) / "index.html"
+        else:
+            output_path = Path(output_dir) / md_file.stem / "index.html"
+            output_path.parent.mkdir(parents=True, exist_ok=True)
         html = render_template(template_env, template_name, context)
         # print(html)
         try:
